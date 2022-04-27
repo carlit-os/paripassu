@@ -65,13 +65,18 @@ let map = new InteractiveMap({
 		// Any openmap data?
 		if (landmark.openMapData) {
 			console.log(landmark.openMapData)
+			// landmark.name = "namma jeff"//landmark.openMapData.name
 			landmark.name = landmark.openMapData.name
+			// landmark.color = [.12, 1, .5]
 		}
 		
 		// *You* decide how to create a marker
 		// These aren't used, but could be examples
 		landmark.idNumber = landmarkCount++
 		landmark.color = [Math.random(), 1, .5]
+		landmark.fontSize = 8
+		// landmark.color = .1
+
 
 		// Give it a random number of points
 		landmark.points = Math.floor(Math.random()*10 + 1)
@@ -87,7 +92,11 @@ let map = new InteractiveMap({
 
 			// Add points to my gamestate
 			gameState.points += landmark.points
-
+			
+			landmark.name = "Captured " + landmark.name
+			landmark.color = [.12,1,0.5]
+			landmark.fontSize = 16
+			
 			
 
 			// Have we captured this?
@@ -95,6 +104,14 @@ let map = new InteractiveMap({
 				gameState.captured.push(landmark.name)
 				// Add a message
 				gameState.messages.push(`You captured ${landmark.name} for ${landmark.points} points`)
+				// map.featureToStyle(landmark)
+			}
+
+			if (gameState.captured.length == 10){
+				var audio = new Audio('../img/yay.mp3');
+				audio.play();
+				gameState.messages.push(``)
+				gameState.messages.push(`You did it!`)
 			}
 
 		}
@@ -105,6 +122,8 @@ let map = new InteractiveMap({
 		// e.g. (2->1, 0->-1)
 		
 		console.log("exit", landmark.name, newLevel)
+		landmark.fontSize = 8
+		// map.featureToStyle(landmark)
 	},
 	
 	
@@ -123,13 +142,14 @@ let map = new InteractiveMap({
 		let hue = landmark.points*.1
 		return {
 			label: landmark.name + "\n" + landmark.distanceToPlayer +"m",
-			fontSize: 8,
+			fontSize: landmark.fontSize,
 
 			// Icons (in icon folder)
 			icon: "person_pin_circle",
 
 			// Colors are in HSL (hue, saturation, lightness)
-			iconColor: [hue, 1, .5],
+			// iconColor: [hue, 1, .5],
+			iconColor: landmark.color,
 			bgColor: [hue, 1, .2],
 			noBG: false // skip the background
 		}
